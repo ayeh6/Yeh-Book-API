@@ -4,22 +4,22 @@ const userSchema = new Schema({
    username: {
       type: String,
       unique: true,
-      trim: true,
       required: true,
+      trim: true,
    },
    email: {
       type: String,
-      unique: true,
       required: [true, 'Please provide an email'],
+      unique: true,
       match: /^[a-z\d_\.-]+@[a-z\d\.-]+\.[a-z\.]{2,6}$/,
    },
-   thoughtsIds: [
+   thoughts: [
       {
          type: Schema.Types.ObjectId,
          ref: 'Thought',
       }
    ],
-   friendsIds: [
+   friends: [
       {
          type: Schema.Types.ObjectId,
          ref: 'User',

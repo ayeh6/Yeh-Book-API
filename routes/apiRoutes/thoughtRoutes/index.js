@@ -5,10 +5,11 @@ const thougthController = require('../../../controllers/apiControllers/thoughtCo
 router.route('/').get();
 router.route('/').post();
 
-// reactionId in body
-router.route('/reactions/:thoughtId').post();
-router.route('/reactions/:thoughtId').delete();
-
+// single thought routes
 router.route('/:thoughtId').get();
 router.route('/:thoughtId').put();  // new thought in body
 router.route('/:thoughtId').delete();
+
+// reactionId in body
+router.route('/:thoughtId/reactions').post();
+router.route('/:thoughtId/reactions/:reactionId').delete();

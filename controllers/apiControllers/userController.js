@@ -1,41 +1,57 @@
+const { all } = require('../../routes/apiRoutes/userRoutes');
 const { User, Thought } = require('./../../models');
 
 const getAllUsers = async (req, res) => {
    try {
+      //find all users
       const usersQuery = await User.find();
       res.status(200).json(usersQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
+   }
 }
 
 const createUser = async (req, res) => {
    try {
-      const newUser = await User.create(req.body);
-      res.status(200).json(newUser);
+      //new user body
+      const newUserBody = req.body;
+
+      //add new user with this body
+      const newUserQuery = await User.create(newUserBody);
+      res.status(200).json(newUserQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 const getUserById = async (req, res) => {
    try {
-      const userQuery = await User.findById(req.params.userId)
+      const userId = req.params.userId;
+
+      //find user by id, populate thoughts and friends
+      const userQuery = await User.findById(userId)
          .populate('thoughts')
          .populate('friends');
+
       res.status(200).json(userQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 const updateUserById = async (req, res) => {
-   const userId = req.params.userId;
-   const updatedUserBody = req.body;
    try {
+      //variables
+      const userId = req.params.userId;
+      const updatedUserBody = req.body;
+
+      //save old user
+      const oldUserQuery = await User.findById(userId);
+
+      //update user
       const updateUserQuery = await User.findByIdAndUpdate(
          userId,
          updatedUserBody,
@@ -43,30 +59,56 @@ const updateUserById = async (req, res) => {
             new: true,
          },
       );
+
+      //update username in all thoughts and reactions
+      if (updatedUserBody.username) {
+         const allThoughts = await Thought.find();
+         //for every thought
+         for(let i=0; i<allThoughts.length; i++) {
+            if(allThoughts[i].username === oldUserQuery.username) {
+               allThoughts[i].username = updatedUserBody.username;
+            }
+            //for every reaction in this thought
+            for(let j=0; j<allThoughts.reactions.length; j++) {
+               if(allThoughts.reactions[j].username === oldUserQuery.username) {
+                  allThoughts.reactions[j].username = updatedUserBody.username;
+               }
+            }
+         }
+      }
+
       res.status(200).json(updateUserQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 const deleteUserById = async (req, res) => {
    try {
+      //variable
       const userId = req.params.userId;
+
+      //delete user
       const deleteUserQuery = await User.findByIdAndDelete(userId);
-      await Thought.deleteMany({ username: deletedUserQuery.username });
+
+      //delete thoughts with deleted user's username
+      await Thought.deleteMany({ username: deleteUserQuery.username });
+
       res.status(200).json(deletedUserQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 const addFriend = async (req, res) => {
-   const userId = req.params.userId;
-   const friendId = req.body.friendId;
-
    try {
+      //variables
+      const userId = req.params.userId;
+      const friendId = req.params.friendId;
+
+      //find user, add friendId to friends
       const user = await User.findByIdAndUpdate(
          userId,
          {
@@ -82,31 +124,34 @@ const addFriend = async (req, res) => {
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 const deleteFriend = async (req, res) => {
-   const userId = req.params.userId;
-   const friendId = req.body.friendId;
-
    try {
+      //variables
+      const userId = req.params.userId;
+      const friendId = req.params.friendId;
+
+      //find user, pull friend with friendId
       const user = await User.findByIdAndUpdate(
-         req.params.userId,
+         userId,
          {
             $pull: {
-               friends: req.params.friendId,
+               friends: friendId,
             },
          },
          {
             new: true,
          },
       );
+
       res.status(200).json(user);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
-   };
-};
+   }
+}
 
 module.exports = {
    getAllUsers,
@@ -116,4 +161,4 @@ module.exports = {
    deleteUserById,
    addFriend,
    deleteFriend,
-};
+}
