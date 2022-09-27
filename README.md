@@ -65,9 +65,9 @@ if (updatedUserBody.username) {
          allThoughts[i].username = updatedUserBody.username;
       }
       //for every reaction in this thought
-      for(let j=0; j<allThoughts.reactions.length; j++) {
-         if(allThoughts.reactions[j].username === oldUserQuery.username) {
-            allThoughts.reactions[j].username = updatedUserBody.username;
+      for(let j=0; j<allThoughts[i].reactions.length; j++) {
+         if(allThoughts[i].reactions[j].username === oldUserQuery.username) {
+            allThoughts[i].reactions[j].username = updatedUserBody.username;
          }
       }
    }
