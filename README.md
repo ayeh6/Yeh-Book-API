@@ -40,7 +40,8 @@ THEN I am able to successfully create and delete reactions to thoughts and add a
 
 ### Links
 
-- Repository URL: [https://github.com/ayeh6/Yeh-Book-API](https://github.com/ayeh6/Yeh-Book-API)
+- Repository URL: [/ayeh6/Yeh-Book-API](https://github.com/ayeh6/Yeh-Book-API)
+- Demonstration Video: [Video Link](https://drive.google.com/file/d/1ECOS-vCN72BLj18ebLhVIJJ_IUG7SaEk/view?usp=sharing)
 
 ## My process
 

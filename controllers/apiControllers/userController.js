@@ -95,7 +95,7 @@ const deleteUserById = async (req, res) => {
       //delete thoughts with deleted user's username
       await Thought.deleteMany({ username: deleteUserQuery.username });
 
-      res.status(200).json(deletedUserQuery);
+      res.status(200).json(deleteUserQuery);
    } catch (error) {
       console.error(error);
       res.status(500).json({ error });
